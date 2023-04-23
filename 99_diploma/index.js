@@ -9,3 +9,5 @@ nunjucks.configure("views", {
 });
 
 app.set("view engine", "njk");
+
+console.log('TEST')
