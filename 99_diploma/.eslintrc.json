@@ -1,13 +1,20 @@
 {
   "parser": "babel-eslint",
-  "extends": ["prettier", "eslint:recommended", "plugin:node/recommended"],
+  "extends": [
+    "prettier",
+    "eslint:recommended",
+    "plugin:node/recommended"
+  ],
   "env": {
     "node": true,
     "es6": true
   },
-  "plugins": ["prettier"],
+  "plugins": [
+    "prettier"
+  ],
   "rules": {
-    "no-process-exit": 0
+    "no-process-exit": 0,
+    "node/no-missing-require": 0
   },
   "settings": {}
 }
