@@ -7,28 +7,19 @@ module.exports = async (req, res) => {
 
     const user = await findUserByUserName(username);
     if (!user) {
-      return res
-        .cookie('authError', 'Invalid username or password', { httpOnly: true })
-        .status(401)
-        .redirect('/');
+      return res.cookie('authError', 'The username or password is incorrect').redirect('/');
     }
     const isValidPass = await bcrypt.compare(password, user.password_hash);
     if (!isValidPass) {
-      return res
-        .cookie('authError', 'Invalid username or password', { httpOnly: true })
-        .status(401)
-        .redirect('/');
+      return res.cookie('authError', 'The username or password is incorrect').redirect('/');
     }
 
     const result = await createSession(user.user_id);
     const { session_id } = result.rows[0];
 
-    return res
-      .cookie('sessionId', session_id, { httpOnly: true })
-      .status(201)
-      .redirect('/dashboard');
+    return res.cookie('sessionId', session_id).redirect('/dashboard');
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({ error: 'Server error' });
+    console.log(err.message);
+    res.cookie('authError', 'There is a server error. Please try again later.').redirect('/');
   }
 };

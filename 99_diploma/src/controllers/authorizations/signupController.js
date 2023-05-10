@@ -5,21 +5,15 @@ module.exports = async (req, res) => {
     const { username, password } = req.body;
     const user = await findUserByUserName(username);
     if (user) {
-      return res
-        .cookie('authError', 'Failed to add user. Username is taken', { httpOnly: true })
-        .status(409)
-        .redirect('/');
+      return res.cookie('authError', 'Failed to add user. Username is taken').redirect('/');
     }
     const { rows } = await createUser(username, password);
     const result = await createSession(rows[0].user_id);
     const { session_id } = result.rows[0];
 
-    return res
-      .cookie('sessionId', session_id, { httpOnly: true })
-      .status(201)
-      .redirect('/dashboard');
+    return res.cookie('sessionId', session_id).redirect('/dashboard');
   } catch (err) {
-    console.log(err);
-    return res.cookie('authError', 'Server error', { httpOnly: true }).status(500).redirect('/');
+    console.log(err.message);
+    res.cookie('authError', 'There is a server error. Please try again later.').redirect('/');
   }
 };

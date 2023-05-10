@@ -1,16 +1,12 @@
 const router = require('express').Router();
 const controllers = require(`@src/controllers`);
-const isAuth = require(`@src/middlewares/isAuth`);
-
-const express = require('express');
-
-const urlencodedParser = express.urlencoded({ extended: false });
+const { isAuth, urlencodedParser, authorizationValidate } = require(`@src/middlewares`);
 
 // SIGNUP ROUTE
-router.post('/signup', urlencodedParser, controllers.signup);
+router.post('/signup', urlencodedParser, authorizationValidate, controllers.signup);
 
 // LOGIN ROUTE
-router.post('/login', urlencodedParser, controllers.login);
+router.post('/login', urlencodedParser, authorizationValidate, controllers.login);
 
 // LOGOUT ROUTE
 router.get('/logout', isAuth, controllers.logout);
