@@ -1,4 +1,5 @@
 const { findUserByUserName, createUser, createSession } = require(`@src/db`);
+const hashedPw = require(`@src/utils/hashedPw`);
 
 module.exports = async (req, res) => {
   try {
@@ -7,9 +8,9 @@ module.exports = async (req, res) => {
     if (user) {
       return res.cookie('authError', 'Failed to add user. Username is taken').redirect('/');
     }
-    const { rows } = await createUser(username, password);
-    const result = await createSession(rows[0].user_id);
-    const { session_id } = result.rows[0];
+    const hash = await hashedPw(password);
+    const { rows } = await createUser(username, hash);
+    const session_id = await createSession(rows[0].user_id);
 
     return res.cookie('sessionId', session_id).redirect('/dashboard');
   } catch (err) {

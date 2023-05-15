@@ -4,11 +4,7 @@ const { isAuth, urlencodedParser, authorizationValidate } = require(`@src/middle
 
 // SIGNUP ROUTE
 router.post('/signup', urlencodedParser, authorizationValidate, controllers.signup);
-
-// LOGIN ROUTE
 router.post('/login', urlencodedParser, authorizationValidate, controllers.login);
-
-// LOGOUT ROUTE
 router.get('/logout', isAuth, controllers.logout);
 
 module.exports = router;

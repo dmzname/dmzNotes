@@ -1,4 +1,4 @@
-const { findUserByUserName, createSession } = require('../../db');
+const { findUserByUserName, createSession } = require(`@src/db`);
 const bcrypt = require('bcrypt');
 
 module.exports = async (req, res) => {
@@ -9,13 +9,12 @@ module.exports = async (req, res) => {
     if (!user) {
       return res.cookie('authError', 'The username or password is incorrect').redirect('/');
     }
-    const isValidPass = await bcrypt.compare(password, user.password_hash);
+    const isValidPass = await bcrypt.compare(password, user.password);
     if (!isValidPass) {
       return res.cookie('authError', 'The username or password is incorrect').redirect('/');
     }
 
-    const result = await createSession(user.user_id);
-    const { session_id } = result.rows[0];
+    const session_id = await createSession(user.user_id);
 
     return res.cookie('sessionId', session_id).redirect('/dashboard');
   } catch (err) {
