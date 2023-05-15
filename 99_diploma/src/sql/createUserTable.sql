@@ -3,7 +3,7 @@ CREATE TABLE users
   (
     user_id serial PRIMARY KEY,
     username varchar(255) NOT NULL,
-    password_hash varchar(255) NOT NULL,
+    password varchar(255) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (now() AT TIME ZONE 'Europe/Kiev'),
     UNIQUE (user_id, username)
   );
