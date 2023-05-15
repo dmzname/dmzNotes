@@ -7,6 +7,7 @@ const app = express();
 
 const mainRoutes = require('./routes');
 const authRoutes = require('./routes/authorization');
+const googleAuthRoute = require('./routes/authorization/googleAuth');
 
 // Variables
 const PORT = process.env.PORT || 3000;
@@ -25,6 +26,7 @@ app.set('view engine', 'njk');
 // Routes
 app.use(mainRoutes);
 app.use(authRoutes);
+app.use(googleAuthRoute);
 
 app.get('*', (req, res) => {
   res.render('404');
