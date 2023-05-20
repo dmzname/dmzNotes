@@ -1,16 +1,18 @@
-const PREFIX = "???";
+import axios from 'axios';
 
-const req = (url, options = {}) => {
+const PREFIX = '/api/v1';
+
+/* const req = (url, options = {}) => {
   const { body } = options;
 
-  return fetch((PREFIX + url).replace(/\/\/$/, ""), {
+  return fetch((PREFIX + url).replace(/\/\/$/, ''), {
     ...options,
     body: body ? JSON.stringify(body) : null,
     headers: {
       ...options.headers,
       ...(body
         ? {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           }
         : null),
     },
@@ -19,15 +21,28 @@ const req = (url, options = {}) => {
       ? res.json()
       : res.text().then((message) => {
           throw new Error(message);
-        })
+        }),
   );
+}; */
+
+export const getNotes = async ({ age, search, page } = {}) => {
+  console.log('GET-NOTES');
+  const { data } = await axios.get(PREFIX + '/notes');
+  console.log(data);
+  return data;
 };
 
-export const getNotes = ({ age, search, page } = {}) => {};
+export const createNote = async (title, text) => {
+  console.log('POST-NOTE');
+  const { data } = await axios.post(PREFIX + '/add-note', { title, text });
+  return data;
+};
 
-export const createNote = (title, text) => {};
-
-export const getNote = (id) => {};
+export const getNote = async (id) => {
+  console.log('GET-NOTE');
+  const { data } = await axios.get(PREFIX + `/note/${id}`);
+  return data;
+};
 
 export const archiveNote = {};
 
