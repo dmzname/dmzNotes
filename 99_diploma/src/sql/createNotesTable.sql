@@ -6,6 +6,7 @@ CREATE TABLE notes
     title text,
     text text,
     html text,
+    page_size integer DEFAULT 5,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (now() AT TIME ZONE 'Europe/Kiev'),
     UNIQUE (note_id)
   );

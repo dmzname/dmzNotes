@@ -22,6 +22,7 @@ router.post('/login', urlencodedParser, authorizationValidate, authorizationMidd
 // LOGOUT ROUTE
 router.get('/logout', isAuth, async (req, res) => {
   deleteSession(req.sessionId).then(() => {
+    res.clearCookie('authError');
     res.clearCookie('sessionId').redirect('/');
   });
 });

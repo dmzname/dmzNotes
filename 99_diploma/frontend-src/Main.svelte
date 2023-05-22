@@ -28,9 +28,16 @@
       page = 1;
       entries = [];
     }
-    return (fetching = getNotes(/*{age, search, page}*/).then((data) => {
+    return (fetching = getNotes({/*age, search,*/ page}).then((data) => {
+      const totalPages = data[0]?.total_pages;
+      const pageSize = data[0]?.page_size;
+
       entries = entries.concat(data);
-      console.log(data.hasMore);
+
+      if (totalPages && page < totalPages && entries.length % pageSize === 0) {
+        data.hasMore = true;
+      }
+
       return data.hasMore;
     }));
   };

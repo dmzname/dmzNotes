@@ -27,14 +27,17 @@ const PREFIX = '/api/v1';
 
 export const getNotes = async ({ age, search, page } = {}) => {
   console.log('GET-NOTES');
-  const { data } = await axios.get(PREFIX + '/notes');
-  console.log(data);
+  const { data } = await axios.get(PREFIX + '/notes', {
+    params: {
+      page: page,
+    },
+  });
   return data;
 };
 
 export const createNote = async (title, text) => {
   console.log('POST-NOTE');
-  const { data } = await axios.post(PREFIX + '/add-note', { title, text });
+  const { data } = await axios.post(PREFIX + '/add', { title, text });
   return data;
 };
 
@@ -48,9 +51,15 @@ export const archiveNote = {};
 
 export const unarchiveNote = {};
 
-export const editNote = (id, title, text) => {};
+export const editNote = async (id, title, text) => {
+  console.log('EDIT-NOTE');
+  const { data } = await axios.patch(PREFIX + `/edit/${id}`, { title, text });
+  return data;
+};
 
-export const deleteNote = (id) => {};
+export const deleteNote = (id) => {
+  console.log('DELETE-NOTE');
+};
 
 export const deleteAllArchived = () => {};
 
