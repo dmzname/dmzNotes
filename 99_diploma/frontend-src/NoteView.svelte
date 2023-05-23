@@ -1,7 +1,7 @@
 <script>
   import {createEventDispatcher} from "svelte";
 
-  import {archiveNote, deleteNote, getNote, unarchiveNote} from "./api";
+  import {archiveNote, deleteNote, getNote, notePdfUrl, unarchiveNote} from "./api";
 
   import Progress from "./Progress.svelte";
 
@@ -50,8 +50,8 @@
     {/if}
 
     <button on:click={doEdit} class="uk-button uk-button-primary"><i class="fas fa-edit"/>&nbsp;Редактировать</button>
-    <!-- <a href={notePdfUrl(entry.note_id)} class="uk-button uk-button-secondary"><i
-        class="fas fa-file-download" />&nbsp;PDF</a> -->
+    <a href={notePdfUrl(entry.note_id)} class="uk-button uk-button-secondary"><i
+      class="fas fa-file-download"/>&nbsp;PDF</a>
     <button on:click={close} class="uk-button uk-button-default"><i class="fas fa-times"/>&nbsp;Закрыть</button>
   </div>
   <div class="uk-card uk-card-default uk-card-body">
