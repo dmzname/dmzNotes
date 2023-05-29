@@ -13,13 +13,8 @@ async function authorizationMiddleware(req, res) {
   }
 }
 
-// SIGNUP ROUTE
 router.post('/signup', urlencodedParser, authorizationValidate, authorizationMiddleware);
-
-// LOGIN ROUTE
 router.post('/login', urlencodedParser, authorizationValidate, authorizationMiddleware);
-
-// LOGOUT ROUTE
 router.get('/logout', isAuth, async (req, res) => {
   deleteSession(req.sessionId).then(() => {
     res.clearCookie('authError');

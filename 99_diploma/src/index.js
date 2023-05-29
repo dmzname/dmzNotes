@@ -31,12 +31,21 @@ app.use(authRoutes);
 app.use(googleAuthRoute);
 app.use('/api/v1', notesRoutes);
 
-app.all('/api/v1/*', (req, res) => {
-  res.status(404).send('There is a server error. Please try again later');
+app.all('/api/v1/*', (req, res, next) => {
+  const err = new Error('There is a server error. Please try again later');
+  next(err);
 });
 
 app.get('*', (req, res) => {
   res.render('404');
+});
+
+// Error middleware
+app.use((err, req, res, next) => {
+  console.log(err);
+  res
+    .status(err.statusCode || 500)
+    .send(err._message || 'There is a server error. Please try again later');
 });
 
 app.listen(PORT, () => {

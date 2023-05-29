@@ -2,22 +2,7 @@ const router = require('express').Router();
 const controllers = require(`@src/controllers`);
 const { isAuth } = require(`@src/middlewares`);
 
-// GET all notes, filtered by page and age note
-router.get('/notes', isAuth, async (req, res) => {
-  try {
-    const { user_id } = req.user;
-    const { page, age } = req.query;
-    const { rows } = await controllers.getAllNotes({ user_id, page, age });
-
-    res.status(200).json(rows);
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).send('There is a server error. Please try again later');
-  }
-});
-
-// CREATE new note
-router.post('/add', isAuth, async (req, res) => {
+router.post('/add', isAuth, async (req, res, next) => {
   try {
     const { user_id } = req.user;
     const { title, text } = req.body;
@@ -25,13 +10,12 @@ router.post('/add', isAuth, async (req, res) => {
 
     res.status(200).json({ ...rows[0] });
   } catch (err) {
-    console.log(err.message);
-    res.status(500).send('Error occurred while creating a note. Please try again later');
+    err._message = 'Error occurred while creating a note. Please try again later';
+    next(err);
   }
 });
 
-// EDIT note
-router.patch('/edit/:id', isAuth, async (req, res) => {
+router.patch('/edit/:id', isAuth, async (req, res, next) => {
   try {
     const { user_id } = req.user;
     const { title, text } = req.body;
@@ -40,13 +24,24 @@ router.patch('/edit/:id', isAuth, async (req, res) => {
     const { rows } = await controllers.editNote({ user_id, title, text, id });
     res.status(200).json({ ...rows[0] });
   } catch (err) {
-    console.log(err.message);
-    res.status(500).send('Error occurred while editing the note. Please try again later');
+    err._message = 'Error occurred while editing the note. Please try again later';
+    next(err);
   }
 });
 
-// GET one note by id
-router.get('/note/:id', isAuth, async (req, res) => {
+router.get('/notes', isAuth, async (req, res, next) => {
+  try {
+    const { user_id } = req.user;
+    const { page, age } = req.query;
+    const { rows } = await controllers.getAllNotes({ user_id, page, age });
+
+    res.status(200).json(rows);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get('/note/:id', isAuth, async (req, res, next) => {
   try {
     const { user_id } = req.user;
     const { id } = req.params;
@@ -54,8 +49,7 @@ router.get('/note/:id', isAuth, async (req, res) => {
     const { rows } = await controllers.getOneNote({ id, user_id });
     res.status(200).json({ ...rows[0] });
   } catch (err) {
-    console.log(err.message);
-    res.status(500).send('There is a server error. Please try again later');
+    next(err);
   }
 });
 
