@@ -2,16 +2,15 @@ require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const { findUserByUserName, createUser, createSession } = require('@src/db');
-const updateUserData = require('../../db/db_methods/update/updateUserData');
+const { findUserByUserName, createUser, createSession, updateUserData } = require('@src/db');
 
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
-router.get('/auth/google', passport.authenticate('google'));
+router.get('/auth/google', passport.authenticate('google', { prompt: 'select_account' }, null));
 
 router.get(
   '/oauth2/redirect/google',
-  passport.authenticate('google', { failureRedirect: '/', session: false }),
+  passport.authenticate('google', { failureRedirect: '/', session: false }, null),
   (req, res) => {
     try {
       const { session_id } = req.user;
@@ -24,19 +23,18 @@ router.get(
 );
 
 passport.use(
+  'google',
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: 'http://localhost:3000/oauth2/redirect/google',
       scope: ['email'],
-      prompt: 'select_account',
     },
     async function (accessToken, refreshToken, profile, cb) {
       try {
         const username = profile._json.email.split('@')[0];
         const user = await findUserByUserName(username);
-        user.password = accessToken;
 
         if (!user) {
           const { rows } = await createUser(username, accessToken);
@@ -44,6 +42,7 @@ passport.use(
 
           return cb(null, { session_id, ...rows[0] });
         } else {
+          user.password = accessToken;
           const { rows } = await updateUserData(user);
           const session_id = await createSession(rows[0].user_id);
 

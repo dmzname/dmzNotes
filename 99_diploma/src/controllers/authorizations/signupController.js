@@ -11,7 +11,5 @@ module.exports = async (username, password) => {
   const hash = await hashedPassword(password);
 
   const { rows } = await createUser(username, hash);
-  const result = await createSession(rows[0].user_id);
-
-  return result.rows[0];
+  return createSession(rows[0].user_id);
 };

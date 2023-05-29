@@ -12,6 +12,5 @@ module.exports = async (username, password) => {
     throw new Error('The username or password is incorrect');
   }
 
-  const result = await createSession(user.user_id);
-  return result.rows[0];
+  return createSession(user.user_id);
 };

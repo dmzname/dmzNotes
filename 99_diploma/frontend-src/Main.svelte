@@ -1,15 +1,13 @@
 <script>
-  import Router, { link, location, push } from "svelte-spa-router";
+  import Router, {link, location, push} from "svelte-spa-router";
 
-  import { routerPrefix, routePatterns, getActiveNoteId } from "./lib";
-  import { deleteAllArchived } from "./api";
-  import { getNotes } from "./api";
-
-  import NoteCard from "./NoteCard.svelte";
+  import {getActiveNoteId, routePatterns, routerPrefix} from "./lib";
+  import {deleteAllArchived, getNotes} from "./api";
   import Progress from "./Progress.svelte";
   import NoteView from "./NoteView.svelte";
   import NoteNew from "./NoteNew.svelte";
   import NoteEdit from "./NoteEdit.svelte";
+  import NoteCard from "./NoteCard.svelte";
 
   export const routes = {
     [routePatterns.new]: NoteNew,
@@ -25,13 +23,20 @@
   let page = 1;
   let entries = [];
 
-  const fetch = ({ reset = false } = {}) => {
+  const fetch = ({reset = false} = {}) => {
     if (reset) {
       page = 1;
       entries = [];
     }
-    return (fetching = getNotes({ age, search, page }).then((data) => {
-      entries = entries.concat(data.data);
+    return (fetching = getNotes({age, /* search,*/ page}).then((data) => {
+      const totalPages = data[0]?.total_pages;
+      const pageSize = data[0]?.page_size;
+
+      entries = entries.concat(data);
+
+      if (totalPages && page < totalPages && entries.length % pageSize === 0) {
+        data.hasMore = true;
+      }
       return data.hasMore;
     }));
   };
@@ -43,16 +48,16 @@
     return fetch();
   };
 
-  const fetchFromScratch = ({ resetNav = true } = {}) => {
+  const fetchFromScratch = ({resetNav = true} = {}) => {
     if (resetNav) {
       push("/");
     }
-    return fetch({ reset: true });
+    return fetch({reset: true});
   };
 
   const refetch = async () => {
     let oldPage = page;
-    await fetchFromScratch({ resetNav: false });
+    await fetchFromScratch({resetNav: false});
     while (page < oldPage) {
       await loadMore();
     }
@@ -65,7 +70,7 @@
   };
 
   const routeEvent = (event) => {
-    const { type, id } = (event && event.detail) || {};
+    const {type, id} = (event && event.detail) || {};
     switch (type) {
       case "note-create-cancelled":
       case "note-closed":
@@ -103,7 +108,8 @@
       {/if}
     {:else}
       <button on:click={deleteAll} class="uk-button uk-button-secondary uk-display-block uk-width-1-1">Удалить весь
-        архив</button>
+        архив
+      </button>
     {/if}
 
     <p>
@@ -126,16 +132,17 @@
     </p> -->
 
     {#each entries as entry}
-      <NoteCard {entry} isActive={entry._id === activeNoteId} />
+      <NoteCard {entry} isActive={entry.note_id === activeNoteId}/>
     {/each}
 
     {#await fetching}
-      <Progress />
+      <Progress/>
     {:then hasMore}
       {#if hasMore}
         <button
           on:click={loadMore}
-          class="uk-button uk-button-secondary uk-margin-top uk-display-block uk-width-1-1">Загрузить ещё&hellip;</button>
+          class="uk-button uk-button-secondary uk-margin-top uk-display-block uk-width-1-1">Загрузить ещё&hellip;
+        </button>
       {/if}
     {:catch error}
       <div class="uk-alert uk-alert-danger">
@@ -150,6 +157,6 @@
       on:routeEvent={routeEvent}
       on:routeLoaded={() => {
         window.scrollTo(0, 0);
-      }} />
+      }}/>
   </div>
 </section>
