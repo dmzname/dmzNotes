@@ -15,6 +15,8 @@ const isArchivedNote = require('./db_methods/update/isArchivedNote');
 const getAllNotes = require('./db_methods/read/getAllNotes');
 const getOneNote = require('./db_methods/read/getOneNote');
 const getArchiveNotes = require('./db_methods/read/getArchiveNotes');
+const deleteAllArchive = require('./db_methods/delete/deleteAllArchive');
+const deleteOneNote = require('./db_methods/delete/deleteOneNote');
 
 module.exports = {
   createUser,
@@ -29,4 +31,6 @@ module.exports = {
   getAllNotes,
   getOneNote,
   getArchiveNotes,
+  deleteAllArchive,
+  deleteOneNote,
 };

@@ -29,18 +29,37 @@ router.patch('/edit/:id', isAuth, async (req, res, next) => {
   }
 });
 
-router.patch('/archive/:id', isAuth, async (req, res, next) => {
-  try {
-    const { user_id } = req.user;
-    const { id } = req.params;
+router
+  .route('/archive(/:id)?')
+  .patch(isAuth, async (req, res, next) => {
+    try {
+      const { user_id } = req.user;
+      const { id } = req.params;
 
-    const { rows } = await controllers.isArchivedNote({ user_id, id });
-    res.status(200).json({ ...rows[0] });
-  } catch (err) {
-    err._message = 'Error occurred while archiving the note. Please try again later.';
-    next(err);
-  }
-});
+      const { rows } = await controllers.isArchivedNote({ user_id, id });
+      res.status(200).json({ ...rows[0] });
+    } catch (err) {
+      err._message = 'Error occurred while archiving the note. Please try again later.';
+      next(err);
+    }
+  })
+  .delete(isAuth, async (req, res, next) => {
+    try {
+      const { user_id } = req.user;
+      const { id } = req.params;
+
+      if (!id) {
+        await controllers.deleteAllArchive(user_id);
+        return res.sendStatus(200);
+      }
+
+      await controllers.deleteOneNote(user_id, id);
+      return res.sendStatus(200);
+    } catch (err) {
+      err._message = 'Error occurred while delete. Please try again later.';
+      next(err);
+    }
+  });
 
 router.get('/notes', isAuth, async (req, res, next) => {
   try {
@@ -68,5 +87,7 @@ router.get('/note/:id', isAuth, async (req, res, next) => {
     next(err);
   }
 });
+
+router.delete('');
 
 module.exports = router;

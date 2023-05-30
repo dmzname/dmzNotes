@@ -9,6 +9,8 @@ const editNote = require('./notes/editNote');
 const getOneNote = require('./notes/getOneNote');
 const getArchiveNotes = require('./notes/getArchiveNotes');
 const isArchivedNote = require('./notes/isArchivedNote');
+const deleteAllArchive = require('./notes/deleteAllArchive');
+const deleteOneNote = require('./notes/deleteOneNote');
 
 module.exports = {
   signup,
@@ -19,4 +21,6 @@ module.exports = {
   getOneNote,
   getArchiveNotes,
   isArchivedNote,
+  deleteAllArchive,
+  deleteOneNote,
 };

@@ -58,17 +58,19 @@ export const getNote = async (id) => {
   }
 };
 
-const archivedHandler = async (id) => {
+const archivedHandler = async (id, method) => {
   try {
-    const { data } = await axios.patch(PREFIX + `/archive/${id}`);
+    const { data } = await axios[method](PREFIX + `/archive${!id ? '' : '/' + id}`);
     return data;
   } catch (err) {
     throw new Error(err.response.data);
   }
 };
 
-export const archiveNote = (id) => archivedHandler(id);
-export const unarchiveNote = (id) => archivedHandler(id);
+export const archiveNote = (id) => archivedHandler(id, 'patch');
+export const unarchiveNote = (id) => archivedHandler(id, 'patch');
+export const deleteNote = (id) => archivedHandler(id, 'delete');
+export const deleteAllArchived = () => archivedHandler('', 'delete');
 
 export const editNote = async (id, title, text) => {
   try {
@@ -78,9 +80,5 @@ export const editNote = async (id, title, text) => {
     throw new Error(err.response.data);
   }
 };
-
-export const deleteNote = (id) => {};
-
-export const deleteAllArchived = () => {};
 
 export const notePdfUrl = (id) => {};
