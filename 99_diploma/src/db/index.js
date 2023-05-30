@@ -11,8 +11,10 @@ const updateUserData = require('./db_methods/update/updateUserData');
 //Database methods Notes Api
 const createNewNote = require('./db_methods/create/createNewNote');
 const editNote = require('./db_methods/update/editNote');
+const isArchivedNote = require('./db_methods/update/isArchivedNote');
 const getAllNotes = require('./db_methods/read/getAllNotes');
 const getOneNote = require('./db_methods/read/getOneNote');
+const getArchiveNotes = require('./db_methods/read/getArchiveNotes');
 
 module.exports = {
   createUser,
@@ -23,6 +25,8 @@ module.exports = {
   findUserBySessionId,
   createNewNote,
   editNote,
+  isArchivedNote,
   getAllNotes,
   getOneNote,
+  getArchiveNotes,
 };

@@ -58,9 +58,17 @@ export const getNote = async (id) => {
   }
 };
 
-export const archiveNote = {};
+const archivedHandler = async (id) => {
+  try {
+    const { data } = await axios.patch(PREFIX + `/archive/${id}`);
+    return data;
+  } catch (err) {
+    throw new Error(err.response.data);
+  }
+};
 
-export const unarchiveNote = {};
+export const archiveNote = (id) => archivedHandler(id);
+export const unarchiveNote = (id) => archivedHandler(id);
 
 export const editNote = async (id, title, text) => {
   try {

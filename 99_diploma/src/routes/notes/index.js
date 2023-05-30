@@ -29,11 +29,27 @@ router.patch('/edit/:id', isAuth, async (req, res, next) => {
   }
 });
 
+router.patch('/archive/:id', isAuth, async (req, res, next) => {
+  try {
+    const { user_id } = req.user;
+    const { id } = req.params;
+
+    const { rows } = await controllers.isArchivedNote({ user_id, id });
+    res.status(200).json({ ...rows[0] });
+  } catch (err) {
+    err._message = 'Error occurred while archiving the note. Please try again later.';
+    next(err);
+  }
+});
+
 router.get('/notes', isAuth, async (req, res, next) => {
   try {
     const { user_id } = req.user;
     const { page, age } = req.query;
-    const { rows } = await controllers.getAllNotes({ user_id, page, age });
+    const isArchive = age === 'archive';
+    const { rows } = !isArchive
+      ? await controllers.getAllNotes({ user_id, page, age })
+      : await controllers.getArchiveNotes({ user_id, page });
 
     res.status(200).json(rows);
   } catch (err) {

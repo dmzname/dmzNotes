@@ -20,6 +20,7 @@ WITH filtered_notes AS (
   SELECT *
   FROM notes
   WHERE user_id = :user_id
+    AND is_archive = false
     AND (
       (:age = '1month' AND created_at >= current_date - interval '1 month')
       OR
@@ -37,3 +38,26 @@ FROM filtered_notes, total_count
 ORDER BY note_id DESC
 LIMIT (SELECT page_size FROM notes WHERE user_id = :user_id LIMIT 1)
 OFFSET ((:page - 1) * (SELECT page_size FROM notes WHERE user_id = :user_id LIMIT 1));
+
+-- [4] Get archives notes
+WITH filtered_notes AS (
+  SELECT *
+  FROM notes
+  WHERE user_id = :user_id
+    AND is_archive = true
+),
+total_count AS (
+  SELECT COUNT(*) AS count
+  FROM filtered_notes
+)
+SELECT filtered_notes.*, CEIL(total_count.count::numeric / page_size) AS total_pages
+FROM filtered_notes, total_count
+ORDER BY note_id DESC
+LIMIT (SELECT page_size FROM notes WHERE user_id = :user_id LIMIT 1)
+OFFSET ((:page - 1) * (SELECT page_size FROM notes WHERE user_id = :user_id LIMIT 1));
+
+-- [5] Add one note to archive
+UPDATE notes
+SET is_archive = NOT is_archive
+WHERE user_id = :user_id AND note_id = :id
+RETURNING *;
