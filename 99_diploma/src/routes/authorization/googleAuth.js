@@ -2,7 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const { findUserByUserName, createUser, createSession, updateUserData } = require('@src/db');
+const { findUserByUserName } = require('@src/db');
+const { createUser, createSession, updateUserData } = require('@src/controllers');
 
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 

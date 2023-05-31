@@ -1,4 +1,11 @@
-const { deleteAllArchive } = require('../../db');
+const db = require('@src/db/connect');
+
 module.exports = async (user_id) => {
-  return deleteAllArchive(user_id);
+  return db.raw(
+    `
+      DELETE FROM notes
+      WHERE user_id = :user_id AND is_archive = true;
+    `,
+    { user_id },
+  );
 };

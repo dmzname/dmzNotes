@@ -1,6 +1,9 @@
 //Authorization
 const signup = require('./authorizations/signupController');
 const login = require('./authorizations/loginController');
+const createSession = require('./authorizations/createSession');
+const deleteSession = require('./authorizations/deleteSession');
+const updateUserData = require('./authorizations//updateUserData');
 
 //Notes
 const getAllNotes = require('./notes/getAllNotes');
@@ -15,6 +18,9 @@ const deleteOneNote = require('./notes/deleteOneNote');
 module.exports = {
   signup,
   login,
+  createSession,
+  deleteSession,
+  updateUserData,
   getAllNotes,
   createNewNote,
   editNote,

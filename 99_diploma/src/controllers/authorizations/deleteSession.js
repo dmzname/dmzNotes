@@ -1,4 +1,4 @@
-const db = require('../../connect');
+const db = require('@src/db/connect');
 
 module.exports = async (sessionId) => {
   return db.raw(
