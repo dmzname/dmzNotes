@@ -1,23 +1,17 @@
-const path = require('path');
-const fs = require('fs');
-const db = require('@src/db/connect');
-const createSession = require('./createSession');
 const { findUserByUserName } = require(`@src/db`);
 const { hashedPassword } = require(`@src/utils`);
-
-const sql = fs
-  .readFileSync(path.join(__dirname, '../../sql/usersQueries.sql'))
-  .toString()
-  .split(';')[1];
+const createUser = require('./createUser');
+const createSession = require('./createSession');
 
 module.exports = async (username, password) => {
   const user = await findUserByUserName(username);
+
   if (user) {
     throw new Error('Failed to add user. Username is taken');
   }
 
   const hash = await hashedPassword(password);
-  const { rows } = await db.raw(sql, { username, hash });
+  const { user_id } = await createUser(username, hash);
 
-  return createSession(rows[0].user_id);
+  return createSession(user_id);
 };

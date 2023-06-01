@@ -8,5 +8,6 @@ const sql = fs
 
 module.exports = async (userData) => {
   const { user_id, username, password } = userData;
-  return db.raw(sql, { user_id, username, password });
+  const { rows } = await db.raw(sql, { user_id, username, password });
+  return rows[0];
 };

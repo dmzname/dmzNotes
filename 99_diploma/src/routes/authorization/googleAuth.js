@@ -38,16 +38,16 @@ passport.use(
         const user = await findUserByUserName(username);
 
         if (!user) {
-          const { rows } = await createUser(username, accessToken);
-          const session_id = await createSession(rows[0].user_id);
+          const userData = await createUser(username, accessToken);
+          const session_id = await createSession(userData.user_id);
 
-          return cb(null, { session_id, ...rows[0] });
+          return cb(null, { session_id, ...userData });
         } else {
           user.password = accessToken;
-          const { rows } = await updateUserData(user);
-          const session_id = await createSession(rows[0].user_id);
+          const userData = await updateUserData(user);
+          const session_id = await createSession(userData.user_id);
 
-          return cb(null, { session_id, ...rows[0] });
+          return cb(null, { session_id, ...userData });
         }
       } catch (err) {
         console.log(err);

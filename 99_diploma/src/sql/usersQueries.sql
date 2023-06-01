@@ -5,7 +5,7 @@
 
 -- [1] Create new user in users table
   INSERT INTO users (username, password)
-  VALUES (:username, :hash)
+  VALUES (:username, :password)
   RETURNING user_id, username, created_at;
 
 -- [2] Update user data in users table
