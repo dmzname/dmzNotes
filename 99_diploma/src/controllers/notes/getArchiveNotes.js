@@ -7,6 +7,6 @@ const sql = fs
   .toString()
   .split(';')[4];
 
-module.exports = async ({ user_id, page }) => {
-  return db.raw(sql, { user_id, page });
+module.exports = async ({ user_id, page, search }) => {
+  return db.raw(sql, { user_id, page, search });
 };

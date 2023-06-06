@@ -28,7 +28,7 @@
       page = 1;
       entries = [];
     }
-    return (fetching = getNotes({age, /* search,*/ page}).then((data) => {
+    return (fetching = getNotes({age, search, page}).then((data) => {
       const totalPages = data[0]?.total_pages;
       const pageSize = data[0]?.page_size;
 
@@ -48,11 +48,20 @@
     return fetch();
   };
 
-  const fetchFromScratch = ({resetNav = true} = {}) => {
+  let delayTimer;
+  const fetchFromScratch = (event, {resetNav = true} = {}) => {
     if (resetNav) {
       push("/");
     }
-    return fetch({reset: true});
+
+    clearTimeout(delayTimer);
+    if (event.type === 'keyup') {
+      delayTimer = setTimeout(function () {
+        return fetch({reset: true});
+      }, 500);
+    } else {
+      return fetch({reset: true});
+    }
   };
 
   const refetch = async () => {
@@ -121,15 +130,15 @@
         <option value="archive">архив</option>
       </select>
     </p>
-    <!-- <p class="uk-search uk-search-default uk-width-1-1">
-      <i uk-search-icon class="uk-icon uk-search-icon fas fa-search" />
+    <p class="uk-search uk-search-default uk-width-1-1">
+      <i uk-search-icon class="uk-icon uk-search-icon fas fa-search"/>
       <input
         bind:value={search}
         on:keyup={fetchFromScratch}
         class="uk-search-input uk-width-1-1"
         type="search"
-        placeholder="Поиск по заголовку" />
-    </p> -->
+        placeholder="Поиск по заголовку"/>
+    </p>
 
     {#each entries as entry}
       <NoteCard {entry} isActive={entry.note_id === activeNoteId}/>

@@ -31,6 +31,7 @@ export const getNotes = async ({ age, search, page } = {}) => {
       params: {
         page,
         age,
+        search,
       },
     });
 

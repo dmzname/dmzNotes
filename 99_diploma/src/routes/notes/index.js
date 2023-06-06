@@ -64,11 +64,11 @@ router
 router.get('/notes', isAuth, async (req, res, next) => {
   try {
     const { user_id } = req.user;
-    const { page, age } = req.query;
+    const { page, age, search } = req.query;
     const isArchive = age === 'archive';
     const { rows } = !isArchive
-      ? await controllers.getAllNotes({ user_id, page, age })
-      : await controllers.getArchiveNotes({ user_id, page });
+      ? await controllers.getAllNotes({ user_id, page, age, search })
+      : await controllers.getArchiveNotes({ user_id, page, search });
 
     res.status(200).json(rows);
   } catch (err) {
@@ -87,7 +87,5 @@ router.get('/note/:id', isAuth, async (req, res, next) => {
     next(err);
   }
 });
-
-router.delete('');
 
 module.exports = router;

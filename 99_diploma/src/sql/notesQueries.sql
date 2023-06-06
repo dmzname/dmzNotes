@@ -21,6 +21,7 @@ WITH filtered_notes AS (
   FROM notes
   WHERE user_id = :user_id
     AND is_archive = false
+    AND title ILIKE '%'||:search||'%'
     AND (
       (:age = '1month' AND created_at >= current_date - interval '1 month')
       OR
@@ -45,6 +46,7 @@ WITH filtered_notes AS (
   FROM notes
   WHERE user_id = :user_id
     AND is_archive = true
+    AND title ILIKE '%'||:search||'%'
 ),
 total_count AS (
   SELECT COUNT(*) AS count
