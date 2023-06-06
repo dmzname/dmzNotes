@@ -15,9 +15,13 @@ SELECT *
 FROM notes
 WHERE note_id = :id AND user_id = :user_id;
 
--- [3] Get all notes filtered by date
+-- [3] Get all notes
 WITH filtered_notes AS (
-  SELECT *
+  SELECT *,
+    CASE
+      WHEN :search <> '' THEN regexp_replace(title, '('||:search||')', '<mark>\1</mark>', 'gi')
+      ELSE title
+    END AS highlights
   FROM notes
   WHERE user_id = :user_id
     AND is_archive = false
@@ -42,7 +46,11 @@ OFFSET ((:page - 1) * (SELECT page_size FROM notes WHERE user_id = :user_id LIMI
 
 -- [4] Get archives notes
 WITH filtered_notes AS (
-  SELECT *
+  SELECT *,
+    CASE
+      WHEN :search <> '' THEN regexp_replace(title, '('||:search||')', '<mark>\1</mark>', 'gi')
+      ELSE title
+    END AS highlights
   FROM notes
   WHERE user_id = :user_id
     AND is_archive = true
