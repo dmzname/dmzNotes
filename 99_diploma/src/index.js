@@ -10,6 +10,10 @@ const authRoutes = require('./routes/authorization');
 const googleAuthRoute = require('./routes/authorization/googleAuth');
 const notesRoutes = require('./routes/notes');
 
+const { launch } = require('puppeteer');
+const { getOneNote } = require('./controllers');
+const { isAuth } = require('./middlewares');
+
 // Variables
 const PORT = process.env.PORT || 3000;
 
@@ -31,6 +35,40 @@ app.use(authRoutes);
 app.use(googleAuthRoute);
 app.use('/api/v1', notesRoutes);
 
+app.get('/download-pdf', isAuth, async (req, res, next) => {
+  try {
+    const { id } = req.query;
+    const { user_id } = req.user;
+
+    const { rows } = await getOneNote({ id, user_id });
+
+    const [noteData = {}] = rows;
+    const { title: filename, html } = noteData;
+
+    const browser = await launch({ headless: 'new' });
+    const page = await browser.newPage();
+
+    await page.setContent(html, { waitUntil: 'networkidle0' });
+    const pdf = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      preferCSSPageSize: true,
+    });
+
+    await browser.close();
+
+    const sanitizedFilename = filename.toLowerCase().replaceAll(' ', '_');
+    const encodedFilename = encodeURIComponent(sanitizedFilename);
+    const contentDisposition = `attachment; filename*=UTF-8''${encodedFilename}.pdf`;
+
+    res.setHeader('Content-Disposition', contentDisposition);
+    res.contentType('application/pdf');
+    res.send(pdf);
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.all('/api/v1/*', (req, res, next) => {
   const err = new Error('There is a server error. Please try again later');
   next(err);
@@ -49,5 +87,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(` Server started on: http://localhost:3000`);
+  console.log(` Server started on: http://localhost:${PORT}`);
 });

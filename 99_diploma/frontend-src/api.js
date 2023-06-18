@@ -2,29 +2,6 @@ import axios from 'axios';
 
 const PREFIX = '/api/v1';
 
-/* const req = (url, options = {}) => {
-  const { body } = options;
-
-  return fetch((PREFIX + url).replace(/\/\/$/, ''), {
-    ...options,
-    body: body ? JSON.stringify(body) : null,
-    headers: {
-      ...options.headers,
-      ...(body
-        ? {
-            'Content-Type': 'application/json',
-          }
-        : null),
-    },
-  }).then((res) =>
-    res.ok
-      ? res.json()
-      : res.text().then((message) => {
-          throw new Error(message);
-        }),
-  );
-}; */
-
 export const getNotes = async ({ age, search, page } = {}) => {
   try {
     const { data } = await axios.get(PREFIX + '/notes', {
@@ -82,4 +59,40 @@ export const editNote = async (id, title, text) => {
   }
 };
 
-export const notePdfUrl = (id) => {};
+export const notePdfUrl = (id) => {
+  axios
+    .get('/download-pdf', {
+      responseType: 'blob',
+      headers: {
+        Accept: 'application/pdf',
+      },
+      params: {
+        id,
+      },
+    })
+    .then((response) => {
+      const filenameHeader = response.headers.get('content-disposition');
+      const filenameMatch = filenameHeader && filenameHeader.match(/filename\*=UTF-8''([^']+)/);
+      const decodedFilename = filenameMatch && decodeURIComponent(filenameMatch[1]);
+      const filename = decodedFilename ? decodedFilename : 'file.pdf';
+
+      const file = new Blob([response.data], { type: 'application/pdf' });
+
+      // Создаем ссылку на Blob-объект
+      const url = URL.createObjectURL(file);
+
+      // Создаем ссылку на скачивание файла
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.click();
+
+      // Освобождаем ресурсы
+      setTimeout(() => {
+        URL.revokeObjectURL(url);
+      }, 0);
+    })
+    .catch((err) => {
+      throw new Error(err.response.data);
+    });
+};

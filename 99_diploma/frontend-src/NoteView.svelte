@@ -41,18 +41,20 @@
   <h1>{entry.title}</h1>
   <div class="uk-margin-bottom">
     {#if entry.is_archive}
-      <button on:click={doDelete} class="uk-button uk-button-default"><i class="fas fa-trash"/>&nbsp;Удалить</button>
-      <button on:click={doUnarchive} class="uk-button uk-button-default"><i
-        class="fas fa-archive"/>&nbsp;Восстановить
+      <button on:click={doDelete} class="uk-button uk-button-default"><i class="fas fa-trash"></i>&nbsp;Удалить</button>
+      <button on:click={doUnarchive} class="uk-button uk-button-default"><i class="fas fa-archive"></i>&nbsp;Восстановить
       </button>
     {:else}
-      <button on:click={doArchive} class="uk-button uk-button-default"><i class="fas fa-archive"/>&nbsp;В архив</button>
+      <button on:click={doArchive} class="uk-button uk-button-default"><i class="fas fa-archive"></i>&nbsp;В архив
+      </button>
     {/if}
 
-    <button on:click={doEdit} class="uk-button uk-button-primary"><i class="fas fa-edit"/>&nbsp;Редактировать</button>
-    <a href={notePdfUrl(entry.note_id)} class="uk-button uk-button-secondary"><i
-      class="fas fa-file-download"/>&nbsp;PDF</a>
-    <button on:click={close} class="uk-button uk-button-default"><i class="fas fa-times"/>&nbsp;Закрыть</button>
+    <button on:click={doEdit} class="uk-button uk-button-primary"><i class="fas fa-edit"></i>&nbsp;Редактировать
+    </button>
+    <button on:click={notePdfUrl(entry.note_id)} class="uk-button uk-button-secondary"><i
+      class="fas fa-file-download"></i>&nbsp;PDF
+    </button>
+    <button on:click={close} class="uk-button uk-button-default"><i class="fas fa-times"></i>&nbsp;Закрыть</button>
   </div>
   <div class="uk-card uk-card-default uk-card-body">
     {@html entry.html}
